@@ -27,19 +27,18 @@ class Inlinifier
 
 	inlinifyScript: (script) ->
 		unless script.src then return
-		scriptPath = path.resolve path.dirname(@path), script.src
-		scriptContent = fs.readFileSync(scriptPath).toString()
+		script.innerHTML = @getFileRelativeToDocument script.src 
 		script.src = ''
-		script.innerHTML = scriptContent
 
 	inlinifyStyles: ->
 		@inlinifyStyle(style) for style in @styles
 
-	inlinifyStyle: (style) ->
-		stylePath = path.resolve path.dirname(@path), style.href
-		styleContent = fs.readFileSync(stylePath).toString()
-		node = @window.document.createElement('style')
-		node.innerHTML = styleContent
-		style.parentNode.replaceChild node, style
+	inlinifyStyle: (link) ->
+		style = @window.document.createElement('style')
+		style.innerHTML = @getFileRelativeToDocument link.href
+		link.parentNode.replaceChild style, link
+
+	getFileRelativeToDocument: (p) ->
+		fs.readFileSync(path.resolve(path.dirname(@path), p)).toString()
 
 module.exports = Inlinifier
