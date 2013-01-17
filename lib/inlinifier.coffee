@@ -9,13 +9,14 @@ class Inlinifier
 		@scripts = []
 
 	inlinify: (callback) ->
-		jsdom.env
-			html: fs.readFileSync(@path).toString()
-			done: (err, window) =>
-				@scripts = window.document.querySelectorAll('script')
-				@inlinifyScripts()
-				@content = window.document.innerHTML
-				callback()
+		html = fs.readFileSync(@path).toString()
+		dom = jsdom.jsdom html
+		window = dom.createWindow()
+		@content = dom.doctype.toString()
+		@scripts = window.document.querySelectorAll('script')
+		@inlinifyScripts()
+		@content += window.document.innerHTML
+		callback()
 
 	inlinifyScripts: ->
 		@inlinifyScript(script) for script in @scripts
