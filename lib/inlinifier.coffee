@@ -1,5 +1,4 @@
 jsdom = require 'jsdom'
-fs = require 'fs'
 path = require 'path'
 url = require 'url'
 
@@ -7,19 +6,18 @@ class Inlinifier
 	constructor: (u) ->
 		@url = u
 		@parsedUrl = url.parse(@url)
-		unless @isProtocolSupported(@parsedUrl.protocol)
-			throw new Error "Unsupported protocol \"#{@parsedUrl.protocol}\""
-
-	isProtocolSupported: (protocol) ->
-		if protocol in ['http:', 'https:', 'file:'] then true else false
 
 	inlinify: (callback) ->
-		dom = jsdom.jsdom(fs.readFileSync(@parsedUrl.path).toString())
-		@window = dom.createWindow()
-		@inlinifyScripts()
-		@inlinifyStyles()
-		@content = dom.doctype.toString()
-		@content += @window.document.innerHTML
+		@constructor.getResource @url, (err, res) =>
+			dom = jsdom.jsdom(res)
+			@window = dom.createWindow()
+			@inlinifyScripts()
+			@inlinifyStyles()
+			@content = dom.doctype.toString()
+			@content += @window.document.innerHTML
+			callback()
+
+	getResource: (docUrl, callback) ->
 		callback()
 
 	inlinifyScripts: ->
