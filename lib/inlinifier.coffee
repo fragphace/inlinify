@@ -11,18 +11,16 @@ class Inlinifier
 		@window = null
 
 	inlinify: (callback) ->
-		html = fs.readFileSync(@path).toString()
-		dom = jsdom.jsdom html
+		dom = jsdom.jsdom(fs.readFileSync(@path).toString())
 		@window = dom.createWindow()
-		@scripts = @window.document.querySelectorAll('script')
 		@inlinifyScripts()
-		@styles = @window.document.querySelectorAll('link[type="text/css"]')
 		@inlinifyStyles()
 		@content = dom.doctype.toString()
 		@content += @window.document.innerHTML
 		callback()
 
 	inlinifyScripts: ->
+		@scripts = @window.document.querySelectorAll('script')
 		@inlinifyScript(script) for script in @scripts
 
 	inlinifyScript: (script) ->
@@ -31,6 +29,7 @@ class Inlinifier
 		script.src = ''
 
 	inlinifyStyles: ->
+		@styles = @window.document.querySelectorAll('link[type="text/css"]')
 		@inlinifyStyle(style) for style in @styles
 
 	inlinifyStyle: (link) ->
