@@ -4,14 +4,16 @@ fs = require 'fs'
 url = require 'url'
 async = require 'async'
 _ = require 'underscore'
+RequestFactory = require './requestFactory'
 
 class Inlinifier
 	constructor: (u) ->
 		@url = u
 		@parsedUrl = url.parse(@url)
+		@mainRequest = RequestFactory.create @url
 
 	inlinify: (callback) ->
-		@getResource (err, res) =>
+		@mainRequest.getContent (err, res) =>
 			dom = jsdom.jsdom(res)
 			@window = dom.createWindow()
 			@inlinifyScripts =>
@@ -19,12 +21,6 @@ class Inlinifier
 					@content = dom.doctype.toString()
 					@content += @window.document.innerHTML
 					callback()
-
-	getResource: (callback) ->
-		callback()
-
-	getRelativeResource: (url, callback) ->
-		callback()
 
 	inlinifyScripts: (callback) ->
 		@scripts = @window.document.querySelectorAll('script')
@@ -35,7 +31,9 @@ class Inlinifier
 		unless script.src
 			callback()
 			return
-		@getRelativeResource script.src, (err, res) =>
+
+		request = RequestFactory.createRelative @url, script.src
+		request.getContent (err, res) =>
 			script.innerHTML = res
 			script.src = ''
 			callback err, res
@@ -46,7 +44,8 @@ class Inlinifier
 		async.parallel inlinifiers, callback
 
 	inlinifyStyle: (link, callback) ->
-		@getRelativeResource link.href, (err, res) =>
+		request = RequestFactory.createRelative @url, link.href
+		request.getContent (err, res) =>
 			style = @window.document.createElement 'style'
 			style.innerHTML = res
 			link.parentNode.replaceChild style, link

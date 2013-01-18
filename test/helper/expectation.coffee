@@ -1,9 +1,8 @@
 fs = require 'fs'
-FileInlinifier = require '../../lib/fileInlinifier'
-UrlInlinifier = require '../../lib/urlInlinifier'
+Inlinifier = require '../../lib/inlinifier'
 
 module.exports = 
-	assertUrlEqualsExpectation: (Inlinifier, url, expectationName, done) ->
+	assertUrlEqualsExpectation: (url, expectationName, done) ->
 		inlinifier = new Inlinifier url
 		inlinifier.inlinify =>
 			assert.equals inlinifier.content, @getExpectation expectationName
@@ -14,7 +13,6 @@ module.exports =
 
 	assertFileEqualsExpectation: (name, done) -> 
 		@assertUrlEqualsExpectation(
-			FileInlinifier, 
 			'file://' + __dirname + '/../fixture/' + name + '.html', 
 			name, 
 			done
@@ -22,7 +20,6 @@ module.exports =
 
 	assertWebpageEqualsExpectation: (name, done) ->
 		@assertUrlEqualsExpectation(
-			UrlInlinifier, 
 			'http://127.0.0.1:3128/' + name, 
 			name, 
 			done
