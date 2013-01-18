@@ -23,4 +23,8 @@ server.get('/basic', function(req, res) {
   return res.send(getViewContent('basic'));
 });
 
+server.get('/inline', function(req, res) {
+  return res.send(getViewContent('inline'));
+});
+
 module.exports = server;

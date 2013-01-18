@@ -19,3 +19,11 @@ module.exports =
 			name, 
 			done
 		)
+
+	assertWebpageEqualsExpectation: (name, done) ->
+		@assertUrlEqualsExpectation(
+			UrlInlinifier, 
+			'http://127.0.0.1:3128/' + name, 
+			name, 
+			done
+		)

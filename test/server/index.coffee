@@ -11,5 +11,6 @@ getViewContent = (name) ->
 
 server.get '/blank', (req, res) -> res.send getViewContent 'blank'
 server.get '/basic', (req, res) -> res.send getViewContent 'basic'
+server.get '/inline', (req, res) -> res.send getViewContent 'inline'
 
 module.exports = server

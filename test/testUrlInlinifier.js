@@ -20,21 +20,13 @@ buster.testCase('UrlInlinifier', {
   tearDown: function() {
     return this.httpServer.close();
   },
-  'test get resource': function(done) {
-    var urlInlinifier,
-      _this = this;
-    urlInlinifier = new UrlInlinifier('http://127.0.0.1:3128/blank');
-    return urlInlinifier.getResource(function(err, res) {
-      assert.equals(res, expectationHelper.getExpectation('blank'));
-      return done();
-    });
-  },
   'test blank': function(done) {
-    var inlinifier;
-    inlinifier = new UrlInlinifier('http://127.0.0.1:3128/blank');
-    return inlinifier.inlinify(function() {
-      assert.equals(inlinifier.content, fs.readFileSync(__dirname + '/expectation/blank.html').toString());
-      return done();
-    });
+    return expectationHelper.assertWebpageEqualsExpectation('blank', done);
+  },
+  'test basic': function(done) {
+    return expectationHelper.assertWebpageEqualsExpectation('basic', done);
+  },
+  'test inline': function(done) {
+    return expectationHelper.assertWebpageEqualsExpectation('inline', done);
   }
 });

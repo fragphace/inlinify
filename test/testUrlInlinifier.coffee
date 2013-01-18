@@ -13,14 +13,6 @@ buster.testCase 'UrlInlinifier',
 	tearDown: ->
 		@httpServer.close()
 
-	'test get resource': (done) ->
-		urlInlinifier = new UrlInlinifier 'http://127.0.0.1:3128/blank'
-		urlInlinifier.getResource (err, res) =>
-			assert.equals res, expectationHelper.getExpectation 'blank'
-			done()
-
-	'test blank': (done) ->
-		inlinifier = new UrlInlinifier 'http://127.0.0.1:3128/blank'
-		inlinifier.inlinify ->
-			assert.equals inlinifier.content, fs.readFileSync(__dirname + '/expectation/blank.html').toString()
-			done()
+	'test blank': (done) -> expectationHelper.assertWebpageEqualsExpectation 'blank', done
+	'test basic': (done) -> expectationHelper.assertWebpageEqualsExpectation 'basic', done
+	'test inline': (done) -> expectationHelper.assertWebpageEqualsExpectation 'inline', done

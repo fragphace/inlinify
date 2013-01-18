@@ -2,6 +2,8 @@ jsdom = require 'jsdom'
 path = require 'path'
 fs = require 'fs'
 url = require 'url'
+async = require 'async'
+_ = require 'underscore'
 
 class Inlinifier
 	constructor: (u) ->
@@ -12,34 +14,42 @@ class Inlinifier
 		@getResource (err, res) =>
 			dom = jsdom.jsdom(res)
 			@window = dom.createWindow()
-			@inlinifyScripts()
-			@inlinifyStyles()
-			@content = dom.doctype.toString()
-			@content += @window.document.innerHTML
-			callback()
+			@inlinifyScripts =>
+				@inlinifyStyles =>
+					@content = dom.doctype.toString()
+					@content += @window.document.innerHTML
+					callback()
 
 	getResource: (callback) ->
 		callback()
 
-	inlinifyScripts: ->
+	getRelativeResource: (url, callback) ->
+		callback()
+
+	inlinifyScripts: (callback) ->
 		@scripts = @window.document.querySelectorAll('script')
-		@inlinifyScript(script) for script in @scripts
+		inlinifiers = @scripts.map (script) => _.bind @inlinifyScript, @, script
+		async.parallel inlinifiers, callback
 
-	inlinifyScript: (script) ->
-		unless script.src then return
-		script.innerHTML = @getFileRelativeToDocument script.src 
-		script.src = ''
+	inlinifyScript: (script, callback) ->
+		unless script.src
+			callback()
+			return
+		@getRelativeResource script.src, (err, res) =>
+			script.innerHTML = res
+			script.src = ''
+			callback err, res
 
-	inlinifyStyles: ->
+	inlinifyStyles: (callback) ->
 		@styles = @window.document.querySelectorAll('link[type="text/css"]')
-		@inlinifyStyle(style) for style in @styles
+		inlinifiers = @styles.map (style) => _.bind @inlinifyStyle, @, style
+		async.parallel inlinifiers, callback
 
-	inlinifyStyle: (link) ->
-		style = @window.document.createElement('style')
-		style.innerHTML = @getFileRelativeToDocument link.href
-		link.parentNode.replaceChild style, link
-
-	getFileRelativeToDocument: (p) ->
-		fs.readFileSync(path.resolve(path.dirname(@parsedUrl.path), p)).toString()
+	inlinifyStyle: (link, callback) ->
+		@getRelativeResource link.href, (err, res) =>
+			style = @window.document.createElement 'style'
+			style.innerHTML = res
+			link.parentNode.replaceChild style, link
+			callback err, res
 
 module.exports = Inlinifier

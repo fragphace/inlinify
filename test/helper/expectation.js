@@ -21,5 +21,8 @@ module.exports = {
   },
   assertFileEqualsExpectation: function(name, done) {
     return this.assertUrlEqualsExpectation(FileInlinifier, 'file://' + __dirname + '/../fixture/' + name + '.html', name, done);
+  },
+  assertWebpageEqualsExpectation: function(name, done) {
+    return this.assertUrlEqualsExpectation(UrlInlinifier, 'http://127.0.0.1:3128/' + name, name, done);
   }
 };
