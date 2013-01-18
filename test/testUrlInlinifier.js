@@ -20,14 +20,14 @@ buster.testCase('UrlInlinifier', {
   tearDown: function() {
     return this.httpServer.close();
   },
-  'get resource': {
-    'test get': function(done) {
-      var _this = this;
-      return UrlInlinifier.getResource('http://127.0.0.1:3128/blank', function(err, res) {
-        assert.equals(res, expectationHelper.getExpectation('blank'));
-        return done();
-      });
-    }
+  'test get resource': function(done) {
+    var urlInlinifier,
+      _this = this;
+    urlInlinifier = new UrlInlinifier('http://127.0.0.1:3128/blank');
+    return urlInlinifier.getResource(function(err, res) {
+      assert.equals(res, expectationHelper.getExpectation('blank'));
+      return done();
+    });
   },
   'test blank': function(done) {
     var inlinifier;

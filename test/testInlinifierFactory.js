@@ -4,11 +4,19 @@ buster = require('buster');
 
 InlinifierFactory = require('../lib/inlinifierFactory');
 
-buster.testCase('Inlinifier', {
-  '// test throws an exception on invalid url': function() {
+buster.testCase('InlinifierFactory', {
+  'test throws an exception on invalid url': function() {
     var _this = this;
     return assert.exception(function() {
-      return new Inlinifier('foo');
+      return InlinifierFactory.create('foo');
     });
+  },
+  'create': {
+    'test create FileInlinifier on file protocol': function() {
+      return assert.equals(InlinifierFactory.create('file:///foo').constructor.name, 'FileInlinifier');
+    },
+    'test create UrlInlinifier on http protocol': function() {
+      return assert.equals(InlinifierFactory.create('http://example.com').constructor.name, 'UrlInlinifier');
+    }
   }
 });

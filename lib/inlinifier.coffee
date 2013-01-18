@@ -1,5 +1,6 @@
 jsdom = require 'jsdom'
 path = require 'path'
+fs = require 'fs'
 url = require 'url'
 
 class Inlinifier
@@ -8,7 +9,7 @@ class Inlinifier
 		@parsedUrl = url.parse(@url)
 
 	inlinify: (callback) ->
-		@constructor.getResource @url, (err, res) =>
+		@getResource (err, res) =>
 			dom = jsdom.jsdom(res)
 			@window = dom.createWindow()
 			@inlinifyScripts()
@@ -17,7 +18,7 @@ class Inlinifier
 			@content += @window.document.innerHTML
 			callback()
 
-	getResource: (docUrl, callback) ->
+	getResource: (callback) ->
 		callback()
 
 	inlinifyScripts: ->

@@ -13,11 +13,11 @@ buster.testCase 'UrlInlinifier',
 	tearDown: ->
 		@httpServer.close()
 
-	'get resource': 
-		'test get': (done) ->
-			UrlInlinifier.getResource 'http://127.0.0.1:3128/blank', (err, res) =>
-				assert.equals res, expectationHelper.getExpectation 'blank'
-				done()
+	'test get resource': (done) ->
+		urlInlinifier = new UrlInlinifier 'http://127.0.0.1:3128/blank'
+		urlInlinifier.getResource (err, res) =>
+			assert.equals res, expectationHelper.getExpectation 'blank'
+			done()
 
 	'test blank': (done) ->
 		inlinifier = new UrlInlinifier 'http://127.0.0.1:3128/blank'

@@ -1,11 +1,11 @@
 #!/usr/bin/env node 
 
-var Inlinifier = require('../lib/inlinifier');
+var InlinifierFactory = require('../lib/inlinifierFactory');
 var optimist = require('optimist');
 var path = require('path');
 var argv = optimist.argv;
 
-var inlinifier = new Inlinifier(argv._[0]);
+var inlinifier = InlinifierFactory.create(argv._[0]);
 inlinifier.inlinify(function () {
   console.log(inlinifier.content);
 });

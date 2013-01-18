@@ -12,7 +12,7 @@ module.exports = {
       _this = this;
     inlinifier = new Inlinifier(url);
     return inlinifier.inlinify(function() {
-      assert.equals(inlinifier.content, getExpectation(name));
+      assert.equals(inlinifier.content, _this.getExpectation(expectationName));
       return done();
     });
   },
@@ -20,6 +20,6 @@ module.exports = {
     return fs.readFileSync(__dirname + '/../expectation/' + name + '.html').toString();
   },
   assertFileEqualsExpectation: function(name, done) {
-    return assertUrlEqualsExpectation(FileInlinifier, 'file://' + __dirname + '/fixture/' + name + '.html', name, done);
+    return this.assertUrlEqualsExpectation(FileInlinifier, 'file://' + __dirname + '/../fixture/' + name + '.html', name, done);
   }
 };

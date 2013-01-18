@@ -6,16 +6,16 @@ module.exports =
 	assertUrlEqualsExpectation: (Inlinifier, url, expectationName, done) ->
 		inlinifier = new Inlinifier url
 		inlinifier.inlinify =>
-			assert.equals inlinifier.content, getExpectation name
+			assert.equals inlinifier.content, @getExpectation expectationName
 			done()
 
 	getExpectation: (name) ->
 		fs.readFileSync(__dirname + '/../expectation/' + name + '.html').toString()
 
 	assertFileEqualsExpectation: (name, done) -> 
-		assertUrlEqualsExpectation(
+		@assertUrlEqualsExpectation(
 			FileInlinifier, 
-			'file://' + __dirname + '/fixture/' + name + '.html', 
+			'file://' + __dirname + '/../fixture/' + name + '.html', 
 			name, 
 			done
 		)
